@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     /*
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
      * "Reset Log"
      */
     private TextView mLifecycleDisplay;
+    private static ArrayList<String> mLifecycleCallbacks = new ArrayList<>();
 
     // TODO (1) Declare and instantiate a static ArrayList of Strings called mLifecycleCallbacks
 
@@ -70,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
                 mLifecycleDisplay.setText(allPreviousLifecycleCallbacks);
             }
         }
+
+        for (int index=mLifecycleCallbacks.size()-1; index>=0; index--){
+            String stateDescription = mLifecycleCallbacks.get(index);
+            mLifecycleDisplay.append(stateDescription+"\n");
+        }
+
+        mLifecycleCallbacks.clear();
 
         // TODO (4) Iterate backwards through mLifecycleCallbacks, appending each String and a newline to mLifecycleDisplay
 
@@ -135,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO (2) Add the ON_STOP String to the front of mLifecycleCallbacks
 
+        mLifecycleCallbacks.add(0,ON_STOP);
         logAndAppend(ON_STOP);
     }
 
@@ -161,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         // TODO (3) Add the ON_DESTROY String to the front of mLifecycleCallbacks
-
+        mLifecycleCallbacks.add(0,ON_DESTROY);
         logAndAppend(ON_DESTROY);
     }
 
