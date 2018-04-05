@@ -46,21 +46,71 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_CREATE);
 
-        // TODO (1) Use logAndAppend within onCreate
     }
 
-    // TODO (2) Override onStart, call super.onStart, and call logAndAppend with ON_START
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setContentView(R.layout.activity_main);
 
-    // TODO (3) Override onResume, call super.onResume, and call logAndAppend with ON_RESUME
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_START);
 
-    // TODO (4) Override onPause, call super.onPause, and call logAndAppend with ON_PAUSE
+    }
 
-    // TODO (5) Override onStop, call super.onStop, and call logAndAppend with ON_STOP
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.activity_main);
 
-    // TODO (6) Override onRestart, call super.onRestart, and call logAndAppend with ON_RESTART
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_RESUME);
 
-    // TODO (7) Override onDestroy, call super.onDestroy, and call logAndAppend with ON_DESTROY
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setContentView(R.layout.activity_main);
+
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_PAUSE);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        setContentView(R.layout.activity_main);
+
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_STOP);
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setContentView(R.layout.activity_main);
+
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_RESTART);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setContentView(R.layout.activity_main);
+
+        mLifecycleDisplay = (TextView) findViewById(R.id.tv_lifecycle_events_display);
+        logAndAppend(ON_DESTROY);
+
+    }
+
+
 
     /**
      * Logs to the console and appends the lifecycle method name to the TextView so that you can
