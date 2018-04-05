@@ -15,13 +15,14 @@
  */
 package com.example.android.asynctaskloader;
 
-import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
-import android.content.Loader;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             ///mSearchResultsTextView.setText(rawJsonSearchResults);
         }
 
-        // TODO (24) Initialize the loader with GITHUB_SEARCH_LOADER as the ID, null for the bundle, and this for the context
+        // (24) Initialize the loader with GITHUB_SEARCH_LOADER as the ID, null for the bundle, and this for the context
+        getSupportLoaderManager().initLoader(GITHUB_SEARCH_LOADER_ID,null, this);
     }
 
     /**
@@ -92,7 +94,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void makeGithubSearchQuery() {
         String githubQuery = mSearchBoxEditText.getText().toString();
 
-        // TODO (17) If no search was entered, indicate that there isn't anything to search for and return
+        //(17) If no search was entered, indicate that there isn't anything to search for and return
+        if (TextUtils.isEmpty(githubQuery)) {
+            mUrlDisplayTextView.setText("No query entered.");
+            return;
+        }
 
         URL githubSearchUrl = NetworkUtils.buildUrl(githubQuery);
         mUrlDisplayTextView.setText(githubSearchUrl.toString());
@@ -109,12 +115,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // (22) Get our Loader by calling getLoader and passing the ID we specified
         // (23) If the Loader was null, initialize it. Else, restart it.
 
-        android.support.v4.app.LoaderManager loaderManager = getSupportLoaderManager();
-        android.support.v4.content.Loader<String> githubSearchLoader = loaderManager.getLoader(GITHUB_SEARCH_LOADER_ID);
+        LoaderManager loaderManager = getSupportLoaderManager();
+       Loader<String> githubSearchLoader = loaderManager.getLoader(GITHUB_SEARCH_LOADER_ID);
         if ( githubSearchLoader == null ){
-            loaderManager.initLoader(GITHUB_SEARCH_LOADER_ID, queryBundle,  (android.support.v4.app.LoaderManager.LoaderCallbacks<String>)this);
+            loaderManager.initLoader(GITHUB_SEARCH_LOADER_ID, queryBundle,  this);
         } else {
-            loaderManager.restartLoader(GITHUB_SEARCH_LOADER_ID, queryBundle, (android.support.v4.app.LoaderManager.LoaderCallbacks<String>) this);
+            loaderManager.restartLoader(GITHUB_SEARCH_LOADER_ID, queryBundle,  this);
         }
     }
 
@@ -172,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<String> onCreateLoader(int i, final Bundle bundle) {
+
         return new AsyncTaskLoader<String>(this) {
 
             @Override
@@ -201,7 +208,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
                 mLoadingIndicator.setVisibility(View.VISIBLE);
 
-                // TODO (8) Force a load ??
+                //  (8) Force a load
+                forceLoad();
             }
         };
     }
@@ -217,9 +225,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<String> loader, String searchResults) {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
-        if (searchResults != null && !searchResults.equals("")) {
-            showJsonDataView();
+        if (!TextUtils.isEmpty(searchResults)) {
             mSearchResultsTextView.setText(searchResults);
+            showJsonDataView();
         } else {
             showErrorMessage();
         }
