@@ -56,6 +56,7 @@ public class NotificationUtils {
     private static final String WATER_REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel";
     private static final int ACTION_DRINK_PENDING_INTENT_ID = 1;
     private static final int ACTION_IGNORE_PENDING_INTENT_ID = 14;
+    private static final int ACTION_CHARGING_NOTIFICATION_INTENT_ID = 21;
 
     public static void clearAllNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager)
@@ -92,7 +93,7 @@ public class NotificationUtils {
         notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    public static void remindUserBecauseCharging(Context context) {
+    public static void sendChargingReminderNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -112,8 +113,7 @@ public class NotificationUtils {
                         context.getString(R.string.charging_reminder_notification_body)))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setContentIntent(contentIntent(context))
-                .addAction(drinkWaterAction(context))
-                .addAction(ignoreReminderAction(context))
+                .addAction(chargingReminderNotificationAction(context))
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
@@ -149,6 +149,20 @@ public class NotificationUtils {
                 "I did it!",
                 incrementWaterPendingIntent);
         return drinkWaterAction;
+    }
+
+    private static Action chargingReminderNotificationAction(Context context) {
+        Intent chargingNotificationIntent = new Intent(context, WaterReminderIntentService.class);
+        chargingNotificationIntent.setAction(ReminderTasks.ACTION_CHARGING_REMINDER);
+        PendingIntent chargingNotificationPendingIntent = PendingIntent.getService(
+                context,
+                ACTION_CHARGING_NOTIFICATION_INTENT_ID,
+                chargingNotificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        Action chargingReminderNotificationAction = new Action(R.drawable.ic_drink_notification,
+                "Thirsty? Have a sip.",
+                chargingNotificationPendingIntent);
+        return chargingReminderNotificationAction;
     }
 
     private static PendingIntent contentIntent(Context context) {
