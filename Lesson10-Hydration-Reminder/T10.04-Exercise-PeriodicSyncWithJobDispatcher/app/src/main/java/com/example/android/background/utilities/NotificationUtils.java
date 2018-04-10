@@ -63,6 +63,35 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
+    public static void sendReminderNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(
+                    WATER_REMINDER_NOTIFICATION_CHANNEL_ID,
+                    context.getString(R.string.main_notification_channel_name),
+                    NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context,WATER_REMINDER_NOTIFICATION_CHANNEL_ID)
+                .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                .setSmallIcon(R.drawable.ic_drink_notification)
+                .setLargeIcon(largeIcon(context))
+                .setContentTitle(context.getString(R.string.charging_reminder_notification_title))
+                .setContentText(context.getString(R.string.charging_reminder_notification_body))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                        context.getString(R.string.charging_reminder_notification_body)))
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setContentIntent(contentIntent(context))
+                .addAction(drinkWaterAction(context))
+                .addAction(ignoreReminderAction(context))
+                .setAutoCancel(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            notificationBuilder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+        notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
+    }
+
     public static void remindUserBecauseCharging(Context context) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -93,6 +122,7 @@ public class NotificationUtils {
         }
         notificationManager.notify(WATER_REMINDER_NOTIFICATION_ID, notificationBuilder.build());
     }
+
     private static Action ignoreReminderAction(Context context) {
         Intent ignoreReminderIntent = new Intent(context, WaterReminderIntentService.class);
         ignoreReminderIntent.setAction(ReminderTasks.ACTION_DISMISS_NOTIFICATION);
